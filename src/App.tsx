@@ -1,25 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import {
+  ColorScheme,
+  ColorSchemeProvider,
+  MantineProvider,
+} from "@mantine/core";
+import { useState } from "react";
+import { Flex } from "@mantine/core";
+import Header from "./SharedComponents/Header";
+import SideBar from "./SharedComponents/SideBar";
+import Features from "./Pages/Features";
+import Error404 from "./Pages/Error404";
+import Authentification from "./Pages/Authentification";
+import SignUp from "./Pages/SignUp";
+import { Route, Routes,BrowserRouter } from "react-router-dom";
 function App() {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+ 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider
+        theme={{ colorScheme: colorScheme }}
+        withGlobalStyles
+        withNormalizeCSS
+      >
+        <Header
+          links={[
+            {
+              link: "/",
+              label: "Home",
+            },
+            {
+              link: "/learn",
+              label: "Features",
+            },
+            {
+              link: "/pricing",
+              label: "Pricing",
+            },
+          ]}
+        />
+        <Flex>
+          <SideBar />
+          <Routes>
+            <Route path="*" element={<Error404 />} />
+            <Route path="/" element={<Features />} />
+            <Route path="/Authentification" element={<Authentification />} />
+            <Route path="/SignUp" element={<SignUp />} />
+          </Routes>
+        </Flex>
+      </MantineProvider>
+    </ColorSchemeProvider>
+    </BrowserRouter>
   );
 }
 
